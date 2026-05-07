@@ -1,0 +1,17 @@
+{
+  "name": "mywebapp",
+  "version": "1.0.0",
+  "description": "Simple Inventory Web Service with Automation",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "migrate": "node migrations/migrate.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "mysql2": "^3.9.7",
+    "yargs": "^17.7.2"
+  },
+  "author": "Student",
+  "license": "ISC"
+}
