@@ -33,7 +33,12 @@ echo "Configuring OS Users..."
 create_user_with_pass() {
     local username=$1
     if ! id "$username" &>/dev/null; then
-        useradd -m -s /bin/bash "$username"
+        # Check if a group with the same name already exists (e.g., 'operator')
+        if getent group "$username" &>/dev/null; then
+            useradd -m -s /bin/bash -g "$username" "$username"
+        else
+            useradd -m -s /bin/bash "$username"
+        fi
         echo "$username:12345678" | chpasswd
         chage -d 0 "$username" # Force password change on first login
         echo "Created user: $username"
@@ -111,16 +116,14 @@ systemctl restart nginx
 systemctl enable nginx
 
 # 9. Systemd Configuration
-echo "Configuring Systemd..."
-cp $REPO_ROOT/systemd/mywebapp.service /etc/systemd/system/
+echo "Configuring Systemd (Socket Activation)..."
+cp $REPO_ROOT/systemd/socket-activation/mywebapp.service /etc/systemd/system/
+cp $REPO_ROOT/systemd/socket-activation/mywebapp.socket /etc/systemd/system/
 systemctl daemon-reload
 
-# Start socket activated elements if needed by replacing mywebapp.service with socket
-# However, assignment says "Later, upgrade the service to use systemd socket activation". 
-# So the setup script will use the standard service deployment.
-
-systemctl enable mywebapp.service
-systemctl start mywebapp.service
+# Enable and start the socket, which dynamically starts the service
+systemctl enable mywebapp.socket
+systemctl start mywebapp.socket
 
 echo "========================================================"
 echo "Deployment Complete!"

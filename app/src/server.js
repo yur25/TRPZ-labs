@@ -28,47 +28,45 @@ function wantsHtml(req) {
     return req.accepts(['html', 'json']) === 'html';
 }
 
-// Root endpoint: Returns list of business logic endpoints (respects Accept header)
+// Root endpoint: Returns list of business logic endpoints (respects Accept header text/html only)
 app.get('/', (req, res) => {
+    if (!req.accepts('html')) {
+        return res.status(406).send('Not Acceptable: Root endpoint only supports text/html');
+    }
+
     const endpoints = [
         { method: 'GET', path: '/items', desc: 'List inventory items' },
         { method: 'POST', path: '/items', desc: 'Create new inventory item' },
-        { method: 'GET', path: '/items/:id', desc: 'Get item details' },
-        { method: 'GET', path: '/health/alive', desc: 'Liveness check' },
-        { method: 'GET', path: '/health/ready', desc: 'Readiness check' }
+        { method: 'GET', path: '/items/:id', desc: 'Get item details' }
     ];
 
-    if (wantsHtml(req)) {
-        const listItems = endpoints.map(e => 
-            `<li><b>${e.method}</b> <a href="${e.path.replace('/:id', '')}">${e.path}</a> - ${e.desc}</li>`
-        ).join('');
-        
-        const formHtml = `
-            <h2>Create New Item</h2>
-            <form action="/items" method="POST">
-                <label>Name: <input type="text" name="name" required></label><br><br>
-                <label>Quantity: <input type="number" name="quantity" required></label><br><br>
-                <button type="submit">Create Item</button>
-            </form>
-        `;
-        
-        res.send(renderHtml('Simple Inventory API', `<h1>Available Endpoints</h1><ul>${listItems}</ul><hr>${formHtml}`));
-    } else {
-        res.json(endpoints);
-    }
+    const listItems = endpoints.map(e => 
+        `<li><b>${e.method}</b> <a href="${e.path.replace('/:id', '')}">${e.path}</a> - ${e.desc}</li>`
+    ).join('');
+    
+    const formHtml = `
+        <h2>Create New Item</h2>
+        <form action="/items" method="POST">
+            <label>Name: <input type="text" name="name" required></label><br><br>
+            <label>Quantity: <input type="number" name="quantity" required></label><br><br>
+            <button type="submit">Create Item</button>
+        </form>
+    `;
+    
+    res.send(renderHtml('Simple Inventory API', `<h1>Available Endpoints</h1><ul>${listItems}</ul><hr>${formHtml}`));
 });
 
 // Health checks
 app.get('/health/alive', (req, res) => {
-    res.status(200).send('OK');
+    res.status(200).send('OK\n');
 });
 
 app.get('/health/ready', async (req, res) => {
     try {
         await db.query('SELECT 1');
-        res.status(200).send('OK');
+        res.status(200).send('OK\n');
     } catch (err) {
-        res.status(500).send(`Database error: ${err.message}`);
+        res.status(500).send(`Database error: ${err.message}\n`);
     }
 });
 

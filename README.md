@@ -37,6 +37,19 @@ mywebapp-lab/
 └── README.md               # Project documentation
 ```
 
+## Virtual Machine Settings
+
+### 1. Base Image
+- **OS:** Ubuntu 24.04 LTS (Desktop Edition).
+- **Download Link:** [Official Ubuntu Desktop Download](https://ubuntu.com/download/desktop).
+- **Image Type:** Desktop Installer (`.iso`).
+
+### 2. Resource Requirements
+- **CPU:** Minimum 2 vCPUs.
+- **RAM:** Minimum 2 GB (4 GB recommended for smooth GUI operation).
+- **Disk Space:** Minimum 25 GB (Required by the Ubuntu Desktop OS).
+- **Network:** Internet access is strictly required to fetch Node.js and system packages.
+
 ## How to Deploy (Automation)
 
 The entire infrastructure can be set up automatically on a fresh Debian/Ubuntu system using the provided bash script. 
@@ -59,7 +72,7 @@ The setup script will:
 - Install, configure, and start the systemd service and nginx.
 
 ## User Accounts
-As requested, the following OS users are configured:
+The following OS users are configured:
 - `student` & `teacher`: Full system access (sudo). Password initialized to `12345678` with a forced reset on first login.
 - `mywebapp`: No-login system account with minimal rights, only used to run the Node.js process.
 - `operator`: Restricted user. Allowed to run `sudo systemctl {start|stop|restart|status} mywebapp` and `sudo nginx -s reload` / `sudo systemctl reload nginx` without entering a root password. Default password `12345678` (forced reset on first login).
@@ -85,13 +98,11 @@ The API supports **Content Negotiation**. It will return raw `JSON` to programma
 **JSON:** `curl -H "Accept: application/json" http://localhost/items/1`
 
 ### 5. Health Checks
-- **Liveness:** `curl http://localhost/health/alive` (Always returns 200 OK)
-- **Readiness:** `curl http://localhost/health/ready` (Returns 200 OK if DB connects, else 500)
+- **Liveness:** `curl http://localhost:5200/health/alive` (Always returns 200 OK)
+- **Readiness:** `curl http://localhost:5200/health/ready` (Returns 200 OK if DB connects, else 500)
 
-## Systemd Socket Activation (Upgrade)
-To upgrade from standard Systemd execution to Socket Activation:
-1. Copy `systemd/socket-activation/mywebapp.socket` and `systemd/socket-activation/mywebapp.service` completely replacing the existing `/etc/systemd/system/mywebapp.service`.
-2. Reload daemons: `sudo systemctl daemon-reload`.
-3. Stop the service: `sudo systemctl stop mywebapp.service`.
-4. Enable and start the socket: `sudo systemctl enable --now mywebapp.socket`.
-5. The Node.js application will dynamically parse `LISTEN_FDS` and bind correctly upon the first incoming request hitting Nginx.
+## Systemd Socket Activation
+This project implements **Systemd Socket Activation** by default. 
+1. Systemd listens on port `5200` via `mywebapp.socket`.
+2. When the first request hits the socket (proxied from NGINX), Systemd automatically starts `mywebapp.service`.
+3. The Node.js application dynamically parses the `LISTEN_FDS` environment variable and takes over the connection.
