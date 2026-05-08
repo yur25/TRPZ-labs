@@ -1,0 +1,23 @@
+[Unit]
+Description=MyWebApp - Simple Inventory Node.js App
+After=network.target mariadb.service
+Requires=mariadb.service
+
+[Service]
+Type=simple
+User=mywebapp
+Group=mywebapp
+WorkingDirectory=/opt/mywebapp/app
+
+# Run the database migration script before starting the server
+# Hardcoded local variables as instructed for the assignment deployment to avoid config files
+ExecStartPre=/usr/bin/node /opt/mywebapp/app/migrations/migrate.js --db-host=127.0.0.1 --db-port=3306 --db-name=mywebappdb --db-user=mywebappuser --db-pass=mywebappsecret
+
+# Start the application server
+ExecStart=/usr/bin/node /opt/mywebapp/app/src/server.js --db-host=127.0.0.1 --db-port=3306 --db-name=mywebappdb --db-user=mywebappuser --db-pass=mywebappsecret --app-port=5200
+
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target

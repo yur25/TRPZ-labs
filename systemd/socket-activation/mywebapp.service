@@ -1,0 +1,22 @@
+[Unit]
+Description=MyWebApp - Simple Inventory Node.js App (Socket Activated)
+After=network.target mariadb.service
+Requires=mariadb.service mywebapp.socket
+
+[Service]
+Type=simple
+User=mywebapp
+Group=mywebapp
+WorkingDirectory=/opt/mywebapp/app
+
+# Run the database migration script before starting the server
+ExecStartPre=/usr/bin/node /opt/mywebapp/app/migrations/migrate.js --db-host=127.0.0.1 --db-port=3306 --db-name=mywebappdb --db-user=mywebappuser --db-pass=mywebappsecret
+
+# Start the application server without the port binding (socket activation takes over)
+ExecStart=/usr/bin/node /opt/mywebapp/app/src/server.js --db-host=127.0.0.1 --db-port=3306 --db-name=mywebappdb --db-user=mywebappuser --db-pass=mywebappsecret
+
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
