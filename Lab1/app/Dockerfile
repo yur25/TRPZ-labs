@@ -1,18 +1,4 @@
-# Stage 1: Build & Install dependencies
-FROM node:20-alpine AS builder
-WORKDIR /usr/src/app
-
-# Copy package files
-COPY package*.json ./
-
-# Install ALL dependencies
-RUN npm ci
-
-# Copy application source code
-COPY . .
-
-# Stage 2: Production runtime
-FROM node:20-alpine AS production
+FROM node:20-alpine
 WORKDIR /usr/src/app
 
 # Set environment to production
@@ -22,9 +8,8 @@ ENV NODE_ENV=production
 COPY package*.json ./
 RUN npm ci --omit=dev
 
-# Copy source from builder
-COPY --from=builder /usr/src/app/src ./src
-COPY --from=builder /usr/src/app/migrations ./migrations
+# Copy application source code
+COPY . .
 
 # Change ownership to the built-in non-root node user
 RUN chown -R node:node /usr/src/app

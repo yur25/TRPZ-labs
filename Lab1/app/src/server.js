@@ -152,7 +152,8 @@ if (process.env.LISTEN_FDS && parseInt(process.env.LISTEN_FDS, 10) > 0) {
 } else {
     // Standard execution via command line
     const port = config.appPort;
-    app.listen(port, '127.0.0.1', () => {
-        console.log(`App started payload successfully. Listening on http://127.0.0.1:${port}`);
+    const host = config.appHost || '127.0.0.1';
+    app.listen(port, host, () => {
+        console.log(`App started payload successfully. Listening on http://${host}:${port}`);
     });
 }
