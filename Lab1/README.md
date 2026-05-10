@@ -106,3 +106,33 @@ This project implements **Systemd Socket Activation** by default.
 1. Systemd listens on port `5200` via `mywebapp.socket`.
 2. When the first request hits the socket (proxied from NGINX), Systemd automatically starts `mywebapp.service`.
 3. The Node.js application dynamically parses the `LISTEN_FDS` environment variable and takes over the connection.
+
+## Running with Docker Compose (Lab 2)
+
+This project has been fully containerized using Docker and Docker Compose. It leverages a custom Docker network and persistent volumes to ensure data survives container restarts.
+
+### Prerequisites
+- Docker
+- Docker Compose v2+
+
+### Setup Instructions
+
+1. **Environment Variables**:
+   Copy the example env file and modify it if necessary:
+   `ash
+   cp .env.example .env
+   ``n
+2. **Start the Systems**:
+   Run the following command in the root directory:
+   `ash
+   docker compose up -d --build
+   ``n
+3. **Verify Functionality**:
+   - The API will be accessible at: http://localhost/ (routed via Nginx).
+   - Expected start order: MariaDB initializes -> Healthcheck passes -> Web app runs migration -> Web app starts -> Nginx starts.
+
+### Architecture Notes
+- **Network**: All containers run on an isolated bridge network lab_network.
+- **Database Persistence**: MariaDB data is stored in the Docker volume inventory_db_volume, ensuring data is not lost when containers are brought down.
+- **Multi-Stage Build**: The Node.js application is built using a two-stage Alpine environment. It runs securely as a non-root 
+ode user.
