@@ -1,0 +1,15 @@
+[Unit]
+Description=My Web App Docker Container
+Requires=docker.service
+After=docker.service network.target
+
+[Service]
+Restart=always
+TimeoutStartSec=0
+ExecStartPre=-/usr/bin/docker stop mywebapp
+ExecStartPre=-/usr/bin/docker rm mywebapp
+ExecStart=/usr/bin/docker run --name mywebapp --env-file /etc/mywebapp/.env -p 8080:8080 ghcr.io/YOUR_GITHUB_USER/mywebapp:stable
+ExecStop=/usr/bin/docker stop mywebapp
+
+[Install]
+WantedBy=multi-user.target
