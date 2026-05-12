@@ -5,12 +5,20 @@
   "main": "src/server.js",
   "scripts": {
     "start": "node src/server.js",
-    "migrate": "node migrations/migrate.js"
+    "migrate": "node migrations/migrate.js",
+    "test": "jest",
+    "test:coverage": "jest --coverage",
+    "lint": "eslint src/**/*.js"
   },
   "dependencies": {
     "express": "^4.19.2",
     "mysql2": "^3.9.7",
     "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "eslint": "^9.0.0",
+    "jest": "^29.0.0",
+    "supertest": "^7.0.0"
   },
   "author": "Student",
   "license": "ISC"
