@@ -6,8 +6,8 @@
   "scripts": {
     "start": "node src/server.js",
     "migrate": "node migrations/migrate.js",
-    "test": "jest",
-    "test:coverage": "jest --coverage",
+    "test": "cross-env DB_USER=test DB_PASSWORD=test DB_NAME=test jest",
+    "test:coverage": "cross-env DB_USER=test DB_PASSWORD=test DB_NAME=test jest --coverage",
     "lint": "eslint src/**/*.js"
   },
   "dependencies": {
@@ -16,6 +16,7 @@
     "yargs": "^17.7.2"
   },
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "eslint": "^9.0.0",
     "jest": "^29.0.0",
     "supertest": "^7.0.0"
