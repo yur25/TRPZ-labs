@@ -9,7 +9,7 @@ sudo useradd -m -s /bin/bash $RUNNER_USER
 sudo -u $RUNNER_USER mkdir -p /home/$RUNNER_USER/actions-runner
 
 RUNNER_VERSION="2.316.1"
-cd /home/$RUNNER_USER/actions-runner
+cd /home/$RUNNER_USER/actions-runner || exit
 sudo -u $RUNNER_USER curl -o actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz -L https://github.com/actions/runner/releases/download/v${RUNNER_VERSION}/actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 sudo -u $RUNNER_USER tar xzf ./actions-runner-linux-x64-${RUNNER_VERSION}.tar.gz
 
