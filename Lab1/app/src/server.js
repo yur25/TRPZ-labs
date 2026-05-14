@@ -142,22 +142,18 @@ app.get('/items/:id', async (req, res) => {
     }
 });
 
-module.exports = app;
-
-// Start server ONLY if executed directly (not when imported for tests)
-if (require.main === module) {
-    // Handle Systemd socket activation seamlessly
-    if (process.env.LISTEN_FDS && parseInt(process.env.LISTEN_FDS, 10) > 0) {
-        // fd 3 is automatically assigned by systemd
-        app.listen({ fd: 3 }, () => {
-            console.log('App started successfully via systemd socket activation.');
-        });
-    } else {
-        // Standard execution via command line
-        const port = config.appPort;
-        const host = config.appHost || '127.0.0.1';
-        app.listen(port, host, () => {
-            console.log(`App started payload successfully. Listening on http://${host}:${port}`);
-        });
-    }
+// Start server
+// Handle Systemd socket activation seamlessly
+if (process.env.LISTEN_FDS && parseInt(process.env.LISTEN_FDS, 10) > 0) {
+    // fd 3 is automatically assigned by systemd
+    app.listen({ fd: 3 }, () => {
+        console.log('App started successfully via systemd socket activation.');
+    });
+} else {
+    // Standard execution via command line
+    const port = config.appPort;
+    const host = config.appHost || '127.0.0.1';
+    app.listen(port, host, () => {
+        console.log(`App started payload successfully. Listening on http://${host}:${port}`);
+    });
 }

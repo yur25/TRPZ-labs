@@ -1,20 +1,17 @@
+# Stage 1: Build & Dependencies
+FROM node:20-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci
+
+# Stage 2: Production
 FROM node:20-alpine
 WORKDIR /usr/src/app
-
-# Set environment to production
 ENV NODE_ENV=production
-
-# Install only production dependencies
-COPY package*.json ./
+COPY --from=builder /app/package*.json ./
 RUN npm ci --omit=dev
-
-# Copy application source code
 COPY . .
-
-# Change ownership to the built-in non-root node user
 RUN chown -R node:node /usr/src/app
-
-# Switch to non-root user
 USER node
 
 EXPOSE 5200
