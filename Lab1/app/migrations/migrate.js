@@ -29,7 +29,8 @@ async function migrate() {
         console.log('Migration completed successfully. Table "inventory_items" is ready.');
     } catch (err) {
         console.error('Migration failed:', err.message);
-        process.exit(1);
+        // Continue even if DB is unavailable, allowing server to start
+        // process.exit(1);
     } finally {
         if (connection) {
             await connection.end();

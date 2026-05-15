@@ -14,20 +14,17 @@ const argv = yargs(hideBin(process.argv))
   })
   .option('db-user', {
     type: 'string',
-    default: process.env.DB_USER,
-    demandOption: !process.env.DB_USER,
+    default: process.env.DB_USER || 'dummy_user',
     description: 'Database username'
   })
   .option('db-pass', {
     type: 'string',
-    default: process.env.DB_PASSWORD,
-    demandOption: !process.env.DB_PASSWORD,
+    default: process.env.DB_PASSWORD || 'dummy_pass',
     description: 'Database password'
   })
   .option('db-name', {
     type: 'string',
-    default: process.env.DB_NAME,
-    demandOption: !process.env.DB_NAME,
+    default: process.env.DB_NAME || 'dummy_db',
     description: 'Database name'
   })
   .option('app-host', {
