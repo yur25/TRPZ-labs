@@ -8,7 +8,7 @@ Restart=always
 TimeoutStartSec=0
 ExecStartPre=-/usr/bin/docker stop mywebapp
 ExecStartPre=-/usr/bin/docker rm mywebapp
-ExecStart=/usr/bin/docker run --name mywebapp --env-file /etc/mywebapp/.env -p 8080:5200 ghcr.io/YOUR_GITHUB_USER/mywebapp:stable
+ExecStart=/usr/bin/docker run --name mywebapp -p 8080:5200 ghcr.io/yur25/trpz-labs/mywebapp:latest
 ExecStop=/usr/bin/docker stop mywebapp
 
 [Install]
