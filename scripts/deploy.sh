@@ -3,16 +3,8 @@ set -e
 
 echo "Deploying to Target Server: $TARGET_USER@$TARGET_IP"
 
-# Copy systemd service file to target VM
-scp -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no systemd/mywebapp-docker.service "$TARGET_USER@$TARGET_IP":/tmp/mywebapp-docker.service
-
 # shellcheck disable=SC2087
 ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$TARGET_USER@$TARGET_IP" << EOF
-  # Install systemd service
-  sudo cp /tmp/mywebapp-docker.service /etc/systemd/system/mywebapp-docker.service
-  sudo systemctl daemon-reload
-  sudo systemctl enable mywebapp-docker.service
-
   # Authenticate Docker on target VM with GHCR
   echo "$GHCR_PAT" | docker login ghcr.io -u "$GITHUB_USER" --password-stdin
   
