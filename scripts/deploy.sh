@@ -19,7 +19,7 @@ echo "Wait 10s for the container to initialize..."
 sleep 10
 
 echo "Running post-deploy health check..."
-HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://"$TARGET_IP"/health/alive)
+HTTP_STATUS=$(curl -o /dev/null -s -w "%{http_code}\n" http://"$TARGET_IP":8080/health/alive)
 
 if [ "$HTTP_STATUS" -eq 200 ]; then
   echo "✅ Deployment verified successfully! HTTP Status: $HTTP_STATUS"
