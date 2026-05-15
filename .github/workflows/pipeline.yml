@@ -9,7 +9,8 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}/mywebapp
+  # Downcase repository name to pass Docker requirements
+  IMAGE_NAME: yur25/trpz-labs/mywebapp
 
 jobs:
   lint-and-test:
