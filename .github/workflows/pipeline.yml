@@ -104,7 +104,7 @@ jobs:
   deploy:
     name: Deploy to Target VM
     needs: build-and-push
-    if: github.ref == 'refs/heads/master' || startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: self-hosted
 
     steps:
@@ -122,7 +122,7 @@ jobs:
         env:
           TARGET_IP: ${{ secrets.TARGET_VM_IP }}
           TARGET_USER: ${{ secrets.TARGET_VM_USER }}
-          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          IMAGE: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:stable
           GHCR_PAT: ${{ secrets.GHCR_PAT }}
           GITHUB_USER: ${{ github.actor }}
         run: |

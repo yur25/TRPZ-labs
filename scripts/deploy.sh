@@ -8,8 +8,12 @@ ssh -i ~/.ssh/id_rsa -o StrictHostKeyChecking=no "$TARGET_USER@$TARGET_IP" << EO
   # Authenticate Docker on target VM with GHCR
   echo "$GHCR_PAT" | docker login ghcr.io -u "$GITHUB_USER" --password-stdin
   
-  # Pull latest stable release
+  # Pull specific image release
   docker pull $IMAGE
+  
+  # Register image tag internally via systemd EnvironmentFile
+  sudo mkdir -p /etc/default
+  echo "IMAGE=$IMAGE" | sudo tee /etc/default/mywebapp
   
   # Restart systemd to apply container updates
   sudo systemctl restart mywebapp-docker.service
