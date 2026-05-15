@@ -59,7 +59,7 @@ app.get('/', (req, res) => {
 // Health checks
 app.get('/health/alive', (req, res) => {
     res.status(200).send('OK\n');
-});
+};
 
 app.get('/health/ready', async (req, res) => {
     try {
