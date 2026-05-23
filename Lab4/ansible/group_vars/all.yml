@@ -1,0 +1,6 @@
+---
+app_port: 5200
+db_user: "mywebappuser"
+db_name: "mywebappdb"
+db_pass: "mywebappsecret"
+db_port: 3306

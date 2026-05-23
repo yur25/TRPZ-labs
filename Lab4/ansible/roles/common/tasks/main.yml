@@ -1,0 +1,31 @@
+---
+- name: Update apt cache
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+
+- name: Create student user
+  user:
+    name: student
+    state: present
+    shell: /bin/bash
+    groups: sudo
+    append: yes
+
+- name: Create gradebook file for student
+  copy:
+    dest: /home/student/gradebook
+    content: "26\n"
+    owner: student
+    group: student
+    mode: '0644'
+
+- name: Create teacher user
+  user:
+    name: teacher
+    state: present
+    shell: /bin/bash
+    password: "{{ '12345678' | password_hash('sha512', 'salt123') }}"
+    groups: sudo
+    append: yes
+    update_password: on_create
