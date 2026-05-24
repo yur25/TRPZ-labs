@@ -37,3 +37,10 @@
     groups: sudo
     append: yes
     update_password: on_create
+    
+- name: Ensure PasswordAuthentication is permitted in sshd_config
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#?PasswordAuthentication'
+    line: 'PasswordAuthentication yes'
+  notify: restart ssh
