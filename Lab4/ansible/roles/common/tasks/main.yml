@@ -3,7 +3,6 @@
   apt:
     update_cache: yes
     cache_valid_time: 3600
-
 - name: Install common necessary packages
   apt:
     name:
@@ -11,7 +10,6 @@
       - curl
       - ca-certificates
     state: present
-
 - name: Create student user
   user:
     name: student
@@ -19,7 +17,6 @@
     shell: /bin/bash
     groups: sudo
     append: yes
-
 - name: Create gradebook file for student
   copy:
     dest: /home/student/gradebook
@@ -27,7 +24,6 @@
     owner: student
     group: student
     mode: '0644'
-
 - name: Create teacher user
   user:
     name: teacher
@@ -37,7 +33,6 @@
     groups: sudo
     append: yes
     update_password: on_create
-
 - name: Drop-in SSH config to force PasswordAuthentication
   copy:
     dest: /etc/ssh/sshd_config.d/01-enable-passwords.conf
@@ -46,10 +41,8 @@
       KbdInteractiveAuthentication yes
     mode: '0644'
   notify: restart ssh
-
 - name: Remove cloud-init SSH override if exists
   file:
     path: /etc/ssh/sshd_config.d/50-cloud-init.conf
     state: absent
   notify: restart ssh
-
