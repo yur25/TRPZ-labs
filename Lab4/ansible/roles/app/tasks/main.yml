@@ -13,7 +13,7 @@
     shell: /bin/bash
     password: "{{ '12345678' | password_hash('sha512', 'salt123') }}"
     update_password: on_create
-    groups: [] # no default sudo group
+    groups: []  # no default sudo group
 
 - name: Configure sudoers for operator
   copy:

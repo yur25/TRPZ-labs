@@ -46,7 +46,6 @@
       KbdInteractiveAuthentication yes
     mode: '0644'
   notify: restart ssh
-
 - name: Remove cloud-init SSH override if exists
   file:
     path: /etc/ssh/sshd_config.d/50-cloud-init.conf
