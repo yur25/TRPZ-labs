@@ -1,0 +1,82 @@
+---
+- name: Create system user 'app'
+  user:
+    name: app
+    system: yes
+    shell: /bin/false
+    state: present
+
+- name: Create operator user
+  user:
+    name: operator
+    state: present
+    shell: /bin/bash
+    password: "{{ '12345678' | password_hash('sha512', 'salt123') }}"
+    update_password: on_create
+    groups: [] # no default sudo group
+
+- name: Configure sudoers for operator
+  copy:
+    dest: /etc/sudoers.d/operator
+    content: |
+      operator ALL=(ALL) NOPASSWD: /bin/systemctl start mywebapp, /bin/systemctl stop mywebapp, /bin/systemctl restart mywebapp, /bin/systemctl status mywebapp, /usr/sbin/nginx -s reload, /bin/systemctl reload nginx
+    mode: '0440'
+
+- name: Add NodeSource GPG key
+  ansible.builtin.get_url:
+    url: https://deb.nodesource.com/gpgkey/nodesource.gpg.key
+    dest: /etc/apt/trusted.gpg.d/nodesource.asc
+
+- name: Add NodeSource repository
+  ansible.builtin.apt_repository:
+    repo: "deb [signed-by=/etc/apt/trusted.gpg.d/nodesource.asc] https://deb.nodesource.com/node_20.x nodistro main"
+    state: present
+    update_cache: yes
+
+- name: Install Node.js
+  apt:
+    name: nodejs
+    state: present
+
+- name: Create application directory
+  file:
+    path: /opt/mywebapp/app
+    state: directory
+    owner: app
+    group: app
+    mode: '0755'
+
+- name: Copy application files
+  synchronize:
+    src: "{{ playbook_dir }}/../../Lab1/app/"
+    dest: /opt/mywebapp/app/
+    rsync_opts:
+      - "--exclude=node_modules"
+      - "--exclude=coverage"
+  notify: restart application
+
+- name: Install Node.js dependencies
+  npm:
+    path: /opt/mywebapp/app
+    production: yes
+
+- name: Fix ownership after npm install
+  file:
+    path: /opt/mywebapp
+    state: directory
+    owner: app
+    group: app
+    recurse: yes
+
+- name: Deploy application systemd service
+  template:
+    src: mywebapp.service.j2
+    dest: /etc/systemd/system/mywebapp.service
+  notify: restart application
+
+- name: Ensure application is running and enabled
+  systemd:
+    name: mywebapp
+    state: started
+    enabled: yes
+    daemon_reload: yes

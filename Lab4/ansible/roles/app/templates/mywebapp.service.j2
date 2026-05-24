@@ -1,0 +1,21 @@
+[Unit]
+Description=MyWebApp - Simple Inventory Node.js App
+After=network.target
+
+[Service]
+Type=simple
+User=app
+Group=app
+WorkingDirectory=/opt/mywebapp/app
+
+# Run the database migration script before starting the server
+ExecStartPre=/usr/bin/node /opt/mywebapp/app/migrations/migrate.js --db-host={{ hostvars[groups['db'][0]]['ansible_host'] }} --db-port={{ db_port }} --db-name={{ db_name }} --db-user={{ db_user }} --db-pass={{ db_pass }}
+
+# Start the application server
+ExecStart=/usr/bin/node /opt/mywebapp/app/src/server.js --db-host={{ hostvars[groups['db'][0]]['ansible_host'] }} --db-port={{ db_port }} --db-name={{ db_name }} --db-user={{ db_user }} --db-pass={{ db_pass }} --app-port={{ app_port }}
+
+Restart=on-failure
+Environment=NODE_ENV=production
+
+[Install]
+WantedBy=multi-user.target
