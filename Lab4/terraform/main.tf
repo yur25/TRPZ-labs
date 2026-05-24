@@ -53,9 +53,6 @@ resource "libvirt_cloudinit_disk" "commoninit" {
 
 # 4. Define Network (Bridged or NAT)
 # Use the default network which is usually NAT with DHCP
-data "libvirt_network" "default" {
-  name = "default"
-}
 
 # 5. Define VMs
 resource "libvirt_domain" "worker" {
@@ -69,7 +66,7 @@ resource "libvirt_domain" "worker" {
     network_id     = data.libvirt_network.default.id
     wait_for_lease = true
   }
-
+name   = "default"
   disk {
     volume_id = libvirt_volume.vm_worker_volume.id
   }
@@ -89,7 +86,7 @@ resource "libvirt_domain" "db" {
   cloudinit = libvirt_cloudinit_disk.commoninit.id
 
   network_interface {
-    network_id     = data.libvirt_network.default.id
+    network_name   = "default"
     wait_for_lease = true
   }
 
