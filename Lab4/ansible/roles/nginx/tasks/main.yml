@@ -1,0 +1,30 @@
+---
+- name: Install Nginx
+  apt:
+    name: nginx
+    state: present
+
+- name: Template Nginx configuration
+  template:
+    src: mywebapp.conf.j2
+    dest: /etc/nginx/sites-available/mywebapp
+  notify: restart nginx
+
+- name: Enable mywebapp site
+  file:
+    src: /etc/nginx/sites-available/mywebapp
+    dest: /etc/nginx/sites-enabled/mywebapp
+    state: link
+  notify: restart nginx
+
+- name: Disable default site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: restart nginx
+
+- name: Ensure Nginx is running and enabled
+  systemd:
+    name: nginx
+    state: started
+    enabled: yes
