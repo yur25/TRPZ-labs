@@ -37,7 +37,7 @@
     groups: sudo
     append: yes
     update_password: on_create
-    
+
 - name: Drop-in SSH config to force PasswordAuthentication
   copy:
     dest: /etc/ssh/sshd_config.d/01-enable-passwords.conf
@@ -46,6 +46,7 @@
       KbdInteractiveAuthentication yes
     mode: '0644'
   notify: restart ssh
+
 - name: Remove cloud-init SSH override if exists
   file:
     path: /etc/ssh/sshd_config.d/50-cloud-init.conf
