@@ -21,7 +21,7 @@ variable "ssh_public_key_path" {
 resource "libvirt_volume" "ubuntu2204_base" {
   name   = "ubuntu-22.04-base"
   pool   = "default"
-  source = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.disk-kvm.img"
+  source = "https://cloud-images.ubuntu.com/jammy/current/jammy-server-cloudimg-amd64.img"
   format = "qcow2"
 }
 
