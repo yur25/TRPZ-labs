@@ -38,9 +38,18 @@
     append: yes
     update_password: on_create
     
-- name: Ensure PasswordAuthentication is permitted in sshd_config
-  lineinfile:
-    path: /etc/ssh/sshd_config
-    regexp: '^#?PasswordAuthentication'
-    line: 'PasswordAuthentication yes'
+- name: Drop-in SSH config to force PasswordAuthentication
+  copy:
+    dest: /etc/ssh/sshd_config.d/01-enable-passwords.conf
+    content: |
+      PasswordAuthentication yes
+      KbdInteractiveAuthentication yes
+    mode: '0644'
   notify: restart ssh
+
+- name: Remove cloud-init SSH override if exists
+  file:
+    path: /etc/ssh/sshd_config.d/50-cloud-init.conf
+    state: absent
+  notify: restart ssh
+
