@@ -63,10 +63,9 @@ resource "libvirt_domain" "worker" {
   cloudinit = libvirt_cloudinit_disk.commoninit.id
 
   network_interface {
-    network_id     = data.libvirt_network.default.id
+    network_name   = "default"
     wait_for_lease = true
   }
-name   = "default"
   disk {
     volume_id = libvirt_volume.vm_worker_volume.id
   }
